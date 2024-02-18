@@ -17,7 +17,7 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-  res.status(200).json({ message: "app is running successfully" });
+  res.status(200).json({ message: "My chat app is running successfully" });
 });
 const port = process.env.PORT || 8000;
 
