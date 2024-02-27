@@ -5,7 +5,6 @@ const getUser = require("../Middleware/getUser");
 const router = express.Router();
 
 router.put("/updatename", getUser, async (req, res) => {
-  console.log("req.cookies", req.cookies)
   try {
     // Validate request body
     if (!req.body || !req.body.name) {
