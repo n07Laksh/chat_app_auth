@@ -4,6 +4,8 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+const { sendCookie } = require("../UtilityFunction/utilityFunction");
+
 require("dotenv").config();
 
 const secret_key = process.env.SECRET_KEY;
@@ -30,7 +32,7 @@ router.post(
     const error = validationResult(req);
     // if error is accured then
     if (!error.isEmpty()) {
-      return res.status(400).json({ err: true, msg: error });
+      return res.status(400).json({ error: true, message: error });
     }
 
     try {
@@ -39,7 +41,7 @@ router.post(
       );
 
       if (user) {
-        return res.status(409).json({ err: true, msg: "User already exists" });
+        return res.status(409).json({ error: true, message: "User already exists" });
       }
 
       //hash password with bcrypt
@@ -62,14 +64,16 @@ router.post(
 
       const { password, _id, ...userData } = user.toObject();
 
+      // setting token to cookie
+      sendCookie(res,"sessionToken", token, 365)
+
       return res.status(200).json({
-        err: false,
-        token: token,
+        error: false,
         user: userData,
-        msg: "Login Succesfully",
+        message: `Welcome to the chat app ${userData.name}`,
       });
     } catch (error) {
-      return res.status(401).json({ err: true, msg: error });
+      return res.status(401).json({ error: true, message: "Internal server error" });
     }
   }
 );
@@ -87,7 +91,7 @@ router.post(
     const error = validationResult(req);
     // if error is occurred then
     if (!error.isEmpty()) {
-      return res.status(400).json({ err: true, message: error });
+      return res.status(400).json({ error: true, message: error });
     }
 
     try {
@@ -95,8 +99,8 @@ router.post(
       // if user not exist in the database
       if (!user) {
         return res.status(400).json({
-          err: true,
-          msg: "Please use the correct UserId and Password",
+          error: true,
+          message: "Please use the correct UserId and Password",
         });
       }
 
@@ -108,7 +112,7 @@ router.post(
       if (!comparePass) {
         return res
           .status(400)
-          .json({ err: true, msg: "Please use correct UserId and Password" });
+          .json({ error: true, message: "Please use correct UserId and Password" });
       }
 
       // jwt authentication
@@ -120,16 +124,20 @@ router.post(
       const token = jwt.sign(data, secret_key);
 
       const { password, _id, ...userData } = user.toObject();
+
+      // setting token to cookie
+      sendCookie(res,"sessionToken", token, 365)
+
       return res.status(201).json({
-        err: false,
-        msg: `Welcome Again ${userData.name}`,
+        error: false,
+        message: `Welcome Again ${userData.name}`,
         user: userData,
-        token: token,
       });
     } catch (error) {
-      return res.status(400).json({ err: true, msg: error });
+      return res.status(400).json({ error: true, message: "Internal server error" });
     }
   }
 );
+
 
 module.exports = router;
