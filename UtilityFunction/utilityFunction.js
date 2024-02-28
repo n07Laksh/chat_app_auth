@@ -4,13 +4,9 @@ function sendCookie(res, key, value, expDay) {
   const cookieOptions = {
     path: "/",
     expires: exDate,
-    secure: true,
     httpOnly: true,
-    SameSite: "None",
   };
 
-  // if (process.env.NODE_ENV === "production") cookieOptions.secure = true; // enable after client app is deployed in secure ssl
-  // https to http is not work while we assign secure true
   res.cookie(key, value, cookieOptions);
 }
 
