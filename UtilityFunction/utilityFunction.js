@@ -4,7 +4,7 @@ function sendCookie(res, key, value, expDay) {
   const cookieOptions = {
     path: "/",
     expires: exDate,
-    secure: false,
+    secure: true,
     httpOnly: true,
     SameSite: "None",
   };
