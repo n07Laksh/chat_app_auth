@@ -67,7 +67,7 @@ router.post(
       const { password, _id, ...userData } = user.toObject();
 
       // setting token to cookie
-      sendCookie(res, "sessionToken", token, 365);
+      sendCookie(res, "sessionToken", token);
 
       return res.status(200).json({
         error: false,
@@ -132,9 +132,8 @@ router.post(
 
       const { password, _id, ...userData } = user.toObject();
 
-      res.cookie("token", token);
       // setting token to cookie
-      sendCookie(res, "sessionToken", token, 365);
+      sendCookie(res, "sessionToken", token);
 
       return res.status(201).json({
         error: false,
