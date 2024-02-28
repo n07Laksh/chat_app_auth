@@ -132,7 +132,7 @@ router.post(
 
       const { password, _id, ...userData } = user.toObject();
 
-      re.cookie("token", token);
+      res.cookie("token", token);
       // setting token to cookie
       sendCookie(res, "sessionToken", token, 365);
 
@@ -142,9 +142,10 @@ router.post(
         user: userData,
       });
     } catch (error) {
+      console.log("Error in loginUser : ", error);
       return res
         .status(400)
-        .json({ error: true, message: "Internal server error" });
+        .json({ error: true, message: "Internal server error " + error });
     }
   }
 );
