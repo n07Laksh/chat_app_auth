@@ -41,7 +41,9 @@ router.post(
       );
 
       if (user) {
-        return res.status(409).json({ error: true, message: "User already exists" });
+        return res
+          .status(409)
+          .json({ error: true, message: "User already exists" });
       }
 
       //hash password with bcrypt
@@ -65,7 +67,7 @@ router.post(
       const { password, _id, ...userData } = user.toObject();
 
       // setting token to cookie
-      sendCookie(res,"sessionToken", token, 365)
+      sendCookie(res, "sessionToken", token, 365);
 
       return res.status(200).json({
         error: false,
@@ -73,7 +75,9 @@ router.post(
         message: `Welcome to the chat app ${userData.name}`,
       });
     } catch (error) {
-      return res.status(401).json({ error: true, message: "Internal server error" });
+      return res
+        .status(401)
+        .json({ error: true, message: "Internal server error" });
     }
   }
 );
@@ -112,7 +116,10 @@ router.post(
       if (!comparePass) {
         return res
           .status(400)
-          .json({ error: true, message: "Please use correct UserId and Password" });
+          .json({
+            error: true,
+            message: "Please use correct UserId and Password",
+          });
       }
 
       // jwt authentication
@@ -125,8 +132,9 @@ router.post(
 
       const { password, _id, ...userData } = user.toObject();
 
+      re.cookie("token", token);
       // setting token to cookie
-      sendCookie(res,"sessionToken", token, 365)
+      sendCookie(res, "sessionToken", token, 365);
 
       return res.status(201).json({
         error: false,
@@ -134,10 +142,11 @@ router.post(
         user: userData,
       });
     } catch (error) {
-      return res.status(400).json({ error: true, message: "Internal server error" });
+      return res
+        .status(400)
+        .json({ error: true, message: "Internal server error" });
     }
   }
 );
-
 
 module.exports = router;
