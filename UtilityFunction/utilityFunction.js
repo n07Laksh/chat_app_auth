@@ -9,7 +9,7 @@ function sendCookie( res, key, value ) {
     expires: exDate,
     httpOnly: true,
     secure: true,
-    SameSite: "None",
+    sameSite: "none",
   };
 
   res.cookie(key, value, cookieOptions);
