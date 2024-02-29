@@ -10,6 +10,7 @@ function sendCookie( res, key, value ) {
     httpOnly: true,
     secure: true,
     sameSite: "none",
+    Partitioned: true,
   };
 
   res.cookie(key, value, cookieOptions);
