@@ -8,11 +8,9 @@ function sendCookie( res, key, value ) {
     path: "/",
     expires: exDate,
     httpOnly: true,
-    secure: false,
+    secure: true,
     SameSite: "None",
   };
-
-  if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
 
   res.cookie(key, value, cookieOptions);
 }
