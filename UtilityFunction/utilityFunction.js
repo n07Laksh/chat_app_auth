@@ -14,6 +14,7 @@ function sendCookie( res, key, value ) {
     expires: expiryDate, // Use the Date object here
     sameSite: "None",
     secure: true,
+    partitioned: true,
   });
 
   res.set("Set-Cookie", setCookie);
