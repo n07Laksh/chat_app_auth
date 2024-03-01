@@ -1,20 +1,22 @@
+
+const cookie = require("cookie");
+
 function sendCookie( res, key, value ) {
 
   const expDay = process.env.JWT_COOKIE_EXPIR_IN || 100;
 
-  const exDate = new Date(Date.now() + expDay * 24 * 60 * 60 * 1000);
+  var expiryDate = new Date();
+  expiryDate.setDate(expiryDate.getDate() + parseInt(expDay)); // Expires in 100 days
 
-  const cookieOptions = {
+  var setCookie = cookie.serialize(key, String(value), {
     path: "/",
-    expires: exDate,
     httpOnly: true,
-    secure: false,
-    SameSite: "None",
-  };
+    expires: expiryDate, // Use the Date object here
+    sameSite: "None",
+    secure: true,
+  });
 
-  if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
-
-  res.cookie(key, value, cookieOptions);
+  res.set("Set-Cookie", setCookie);
 }
 
 module.exports = { sendCookie };
