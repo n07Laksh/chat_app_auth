@@ -9,13 +9,11 @@ function sendCookie( res, key, value ) {
   expiryDate.setDate(expiryDate.getDate() + parseInt(expDay)); // Expires in 100 days
 
   var setCookie = cookie.serialize(key, String(value), {
-    domain: "vercel.app",
     path: "/",
     httpOnly: true,
     expires: expiryDate, // Use the Date object here
     sameSite: "None",
     secure: true,
-    partitioned: true,
   });
 
   res.set("Set-Cookie", setCookie);
