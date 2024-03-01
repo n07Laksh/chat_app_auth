@@ -9,7 +9,7 @@ function sendCookie( res, key, value ) {
   expiryDate.setDate(expiryDate.getDate() + parseInt(expDay)); // Expires in 100 days
 
   var setCookie = cookie.serialize(key, String(value), {
-    domain: ".vercel.app",
+    domain: ["https://chat-app-profile.vercel.app","https://chat-app-auth.vercel.app"],
     path: "/",
     httpOnly: true,
     expires: expiryDate, // Use the Date object here
