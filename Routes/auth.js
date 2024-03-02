@@ -3,6 +3,7 @@ const User = require("../Models/User");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 
 const { sendCookie } = require("../UtilityFunction/utilityFunction");
 
@@ -114,12 +115,10 @@ router.post(
       );
 
       if (!comparePass) {
-        return res
-          .status(400)
-          .json({
-            error: true,
-            message: "Please use correct UserId and Password",
-          });
+        return res.status(400).json({
+          error: true,
+          message: "Please use correct UserId and Password",
+        });
       }
 
       // jwt authentication
@@ -148,5 +147,80 @@ router.post(
     }
   }
 );
+
+// Initialize Nodemailer transporter
+var transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.NODE_MAIL_USER,
+    pass: process.env.NODE_MAIL_PASS,
+  },
+});
+
+// Generate random verification code
+function generateVerificationCode() {
+  return Math.floor(1000 + Math.random() * 900000);
+}
+
+router.post("/email", async (req, res) => {
+  const email = req.body.email;
+
+  // Generate verification code
+  const verificationCode = generateVerificationCode();
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedOTP = await bcrypt.hash(`${verificationCode}`, salt);
+
+  // Send verification code via email
+  const mailOptions = {
+    from: `"Chat App" ${process.env.NODE_MAIL_USER}`,
+    to: email,
+    subject: "Email Verification Code for Chat App",
+    html: `
+      <div style="text-align: center; color: green; font-size: large;">
+      <b>Welcome to the Chat App</b>
+      </div>
+      <br/> <hr/>
+     <div style="text-align: center;">
+     <h5 style="color:red"><b>Your verification code for Chat</b></h5>
+     <br/><br/>
+     <mark style="font-size:30px; background:yellow; color:black">${verificationCode}</mark>
+     </div>
+    `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log("Mailing error:", error);
+      return res
+        .status(500)
+        .json({
+          error: true,
+          message: "Failed to send verification code via email.",
+        });
+    } else {
+      console.log("Email sent: " + info);
+      return res
+        .status(200)
+        .json({
+          error: false,
+          message: "Verification code send to email",
+          otp: hashedOTP,
+        });
+    }
+  });
+});
+
+router.post("/verifyemail", async (req, res) => {
+  const { code, enteredCode } = req.body;
+
+  const compareOTP = await bcrypt.compare(enteredCode, code);
+
+  if (compareOTP) {
+    return res.status(200).json({error:false, message:"Verification successful. User authenticated."});
+  } else {
+    return res.status(400).json({error:true, message:"Verification failed. Incorrect code entered."});
+  }
+});
 
 module.exports = router;
