@@ -13,8 +13,8 @@ function sendCookie( res, key, value ) {
     path: "/",
     httpOnly: true,
     expires: expiryDate, // Use the Date object here
-    // sameSite: "None",
-    // secure: true,
+    sameSite: "None",
+    secure: true,
   });
 
   res.set("Set-Cookie", setCookie);
